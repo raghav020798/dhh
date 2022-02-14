@@ -27,3 +27,5 @@ cd dhh/app
 
 
 
+
+  *logs have been enabled in my spark job, so as you are inside cluster, you can also track what's happening at each step*
