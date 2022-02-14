@@ -1,31 +1,39 @@
 # dhh
 
-Hola! This readme file will guide you how to setup my test answer in your local environment.
+Hola! This file will guide you how to setup this project in your local environment.
 
-Step 1:
-mkdir dhh && cd ff
-Clone this repository
+## Project
 
-Step 2:
-https://cloud.google.com/dataproc/docs/quickstarts/quickstart-console
-Create a dataproc cluster with cluster name `dhh-cluster` and region `us-central1`
+The main goal of project is to provide four parameters given a full_visitor_id, i.e, 
 
-Step 3: Setting up docker
-Build docker file:
-`docker build --tag dhh-app .`
+- full_visitor_id
+- address_changed
+- order_placed
+- order_delivered
+- application_type
 
-Run container with bash and exposing ports 5000:5000
+The dataset is available in google cloud storage.
 
-`docker run -ti --name dhh -p 5000:5000 dhh-app:latest bash`
+## Approach
 
-Authenticate using `gcloud init`
+The dataset provided consists of google analytics data and corresponding transaction data. 
+Firstly I tested my core logic on dataproc clusters. Once satisfied, a flask app was built which upon receiving request, triggers a spark job on dataproc cluster and then returns the above response as string.
+After this I containerised entire logic using docker. 
 
-Run flask app with command:
-`flask run --host 0.0.0.0`
+### Pyspark
+Since the GA data is nested, which requred unnesting, it was necessary to use something that runs in distributed manner. Using pandas or any other technology caused our app to freeze and eventually terminate.
 
-Step 3:
+Hence I chose spark to query this data.
 
-Open another terminal or postman desktop client to make api call
-curl http://127.0.0.1:5000/user?fullvisitorid={}
+### Dataproc
+The app was designed keeping scaling in mind. Since our data was intially hosted on GCP storage, dataproc clusters were used to test and deploy the app.
+
+### Docker
+One requirement was to create an RestfulAPI for our app. So I used flask to host my app and containerised it using docker. 
+
+The base image use is google/cloud-sdk:slim. It was preffered as it contains google cloud sdk to help submit spark jobs from within our docker containers.
+
+
+
 
 
